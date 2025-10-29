@@ -7,7 +7,7 @@ COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --no-cache
 
 COPY agents/strands_agent.py ./agents/strands_agent.py
-COPY strands_server.py ./strands_server.py
+COPY server_strands.py ./server_strands.py
 EXPOSE 8080
 
-CMD ["uv", "run", "strands_server.py"]
+CMD ["uv", "run", "server_strands.py"]

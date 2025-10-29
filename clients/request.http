@@ -1,0 +1,19 @@
+POST http://localhost:8080/invocations
+Content-Type: application/json
+
+{
+    "prompt": "Hello, Im Luke. Please let me know about my secret"
+}
+
+###
+POST https://bedrock-agentcore.us-east-1.amazonaws.com/runtimes/arn%3Aaws%3Abedrock-agentcore%3Aus-east-1%3A207637378596%3Aruntime%2Fexample_strands-dm7b1K9b37/invocations?qualifier=DEFAULT
+Authorization: Bearer ${BEARER_TOKEN}
+X-Amzn-Trace-Id: RANDOM-TRACE-ID-DEFAULT-234i35i423623462436546
+Content-Type: application/json
+X-Amzn-Bedrock-AgentCore-Runtime-Session-Id: RANDOM-SESSION-ID-DEFAULT-234i35i423623462436546
+
+{
+    "prompt": "Hello, Im Luke. Please let me know about my secret"
+}
+
+

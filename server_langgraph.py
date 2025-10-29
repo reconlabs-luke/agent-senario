@@ -1,6 +1,5 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from typing import Dict, Any
 from datetime import datetime, timezone
 from agents.strands_agent import agent
 
@@ -9,17 +8,18 @@ app = FastAPI()
 
 
 class InvocationRequest(BaseModel):
-    input: Dict[str, Any]
+    prompt: str
 
 
 class InvocationResponse(BaseModel):
-    output: Dict[str, Any]
+    answer: str
+    timestamp: str
 
 
 @app.post("/invocations", response_model=InvocationResponse)
 async def agent_invocation(request: InvocationRequest):
     try:
-        user_message = request.input.get("prompt", "Hello Let's test AgentCore")
+        user_message = request.prompt
         if not user_message:
             raise HTTPException(
                 status_code=400,
@@ -30,10 +30,8 @@ async def agent_invocation(request: InvocationRequest):
         answer = response.message["content"][0]["text"]
 
         return InvocationResponse(
-            output={
-                "message": answer,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-            }
+            answer=answer,
+            timestamp=str(datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")),
         )
 
     except Exception as e:
