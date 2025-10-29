@@ -1,0 +1,13 @@
+# Use uv's ARM64 Python base image
+FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim
+
+WORKDIR /app
+
+COPY pyproject.toml uv.lock ./
+RUN uv sync --frozen --no-cache
+
+COPY agents/strands_agent.py ./agents/strands_agent.py
+COPY strands_server.py ./strands_server.py
+EXPOSE 8080
+
+CMD ["uv", "run", "strands_server.py"]

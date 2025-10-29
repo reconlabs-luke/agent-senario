@@ -1,0 +1,13 @@
+# Use uv's ARM64 Python base image
+FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim
+
+WORKDIR /app
+
+COPY pyproject.toml uv.lock ./
+RUN uv sync --frozen --no-cache
+
+COPY agents/langgraph_agent.py ./agents/langgraph_agent.py
+COPY structure_mcp/mcp_server.py ./structure_mcp/mcp_server.py
+EXPOSE 8000
+
+CMD ["uv", "run", "structure_mcp/mcp_server.py"]
