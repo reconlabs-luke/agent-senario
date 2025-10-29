@@ -20,6 +20,10 @@ if COGNITO_DISCOVERY_URL and COGNITO_CLIENT_ID:
         }
     )
 
+environment_variables = {}
+if OPENAI_API_KEY:
+    environment_variables.update({"OPENAI_API_KEY": OPENAI_API_KEY})
+
 try:
     response = client.create_agent_runtime(
         agentRuntimeName=AGENT_NAME,
@@ -30,6 +34,7 @@ try:
         roleArn=ROLE_ARN,
         protocolConfiguration={"serverProtocol": SERVER_PROTOCOL},
         authorizerConfiguration=authorizer_configuration,
+        environmentVariables=environment_variables,
     )
 
 except ClientError as e:
@@ -50,6 +55,7 @@ except ClientError as e:
             roleArn=ROLE_ARN,
             protocolConfiguration={"serverProtocol": SERVER_PROTOCOL},
             authorizerConfiguration=authorizer_configuration,
+            environmentVariables=environment_variables,
         )
     else:
         raise e

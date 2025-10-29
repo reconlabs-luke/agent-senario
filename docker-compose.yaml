@@ -11,34 +11,23 @@ services:
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
       AWS_SESSION_TOKEN: ${AWS_SESSION_TOKEN}
       AWS_REGION: ${AWS_REGION}
-      AGENT_CORE_NAME: ${AGENT_CORE_NAME}
-      AGENT_CORE_CONTAINER_URI: ${AGENT_CORE_CONTAINER_URI}
-      AGENT_CORE_ROLE_ARN: ${AGENT_CORE_ROLE_ARN}
-      AGENT_CORE_SERVER_PROTOCOL: ${AGENT_CORE_SERVER_PROTOCOL}
 
-  mcp:
+  langgraph_agent_as_mcp_tool:
     build:
       context: .
       dockerfile: Dockerfile.agent_as_tool
+    image: ${AGENT_CORE_CONTAINER_URI}
     ports:
       - "8000:8000"
     environment:
-      - AGENT_NAME=mcp
-      - CONTAINER_URI=0.0.0.0:8000
-      - ROLE_ARN=arn:aws:iam::123456789012:role/bedrock-agentcore-control
-      - COGNITO_DISCOVERY_URL=https://cognito-idp.ap-northeast-2.amazonaws.com/ap-northeast-2_1234567890
-      - COGNITO_CLIENT_ID=1234567890
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
 
-  a2a:
+  langgraph_agent_a2a:
     build:
       context: .
       dockerfile: Dockerfile.supervisor
     ports:
       - "8000:8000"
     environment:
-      - AGENT_NAME=a2a
-      - CONTAINER_URI=0.0.0.0:8000
-      - ROLE_ARN=arn:aws:iam::123456789012:role/bedrock-agentcore-control
-      - COGNITO_DISCOVERY_URL=https://cognito-idp.ap-northeast-2.amazonaws.com/ap-northeast-2_1234567890
-      - COGNITO_CLIENT_ID=1234567890
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
     
