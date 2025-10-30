@@ -18,8 +18,7 @@ async def remote_main():
     print(f"✅ Got Access Token: {bearer_token[:30]}...")
 
     if not AGENT_NAME or not bearer_token:
-        print("Error: AGENT_RUNTIME_NAME or BEARER_TOKEN environment variable is not set")
-        sys.exit(1)
+        raise ValueError("Error: AGENT_RUNTIME_NAME or BEARER_TOKEN environment variable is not set")
 
 
     encoded_arn = AGENT_ARN.replace(":", "%3A").replace("/", "%2F")

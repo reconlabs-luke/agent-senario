@@ -30,7 +30,7 @@ services:
   langgraph_agent_a2a:
     build:
       context: .
-      dockerfile: Dockerfile.supervisor
+      dockerfile: Dockerfile.a2a
     ports:
       - "8000:8000"
     environment:

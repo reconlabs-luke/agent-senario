@@ -1,0 +1,14 @@
+# Use uv's ARM64 Python base image
+FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim
+
+WORKDIR /app
+ENV PYTHONPATH=/app
+
+COPY pyproject.toml uv.lock ./
+RUN uv sync --frozen --no-cache
+
+COPY agents/langgraph_agent.py ./agents/langgraph_agent.py
+COPY structure_a2a/a2a_server.py ./structure_a2a/a2a_server.py
+EXPOSE 8000
+
+CMD ["uv", "run", "structure_a2a/a2a_server.py"]
