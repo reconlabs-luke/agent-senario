@@ -4,6 +4,7 @@ load_dotenv()
 
 from botocore.exceptions import ClientError
 from envs import *
+from stage import Stage
 
 import boto3
 
@@ -23,16 +24,23 @@ if COGNITO_DISCOVERY_URL and COGNITO_CLIENT_ID:
 environment_variables = {}
 if OPENAI_API_KEY:
     environment_variables.update({"OPENAI_API_KEY": OPENAI_API_KEY})
+if AGENTCORE_RUNTIME_PORT:
+    environment_variables.update({"AGENTCORE_RUNTIME_PORT": AGENTCORE_RUNTIME_PORT})
+if STAGE:
+    if STAGE.lower() not in [Stage.QA.value.lower(), Stage.PROD.value.lower()]:
+        raise ValueError(f"STAGE must be {Stage.QA.value} or {Stage.PROD.value}")
+
+    environment_variables.update({"STAGE": STAGE})
 
 try:
     response = client.create_agent_runtime(
-        agentRuntimeName=AGENT_NAME,
+        agentRuntimeName=AGENTCORE_RUNTIME_NAME,
         agentRuntimeArtifact={
-            "containerConfiguration": {"containerUri": CONTAINER_URI}
+            "containerConfiguration": {"containerUri": AGENTCORE_RUNTIME_CONTAINER_URI}
         },
         networkConfiguration={"networkMode": "PUBLIC"},
-        roleArn=ROLE_ARN,
-        protocolConfiguration={"serverProtocol": SERVER_PROTOCOL},
+        roleArn=AGENTCORE_RUNTIME_ROLE_ARN,
+        protocolConfiguration={"serverProtocol": AGENTCORE_RUNTIME_SERVER_PROTOCOL},
         authorizerConfiguration=authorizer_configuration,
         environmentVariables=environment_variables,
     )
@@ -44,16 +52,18 @@ except ClientError as e:
         runtime_id = [
             runtime["agentRuntimeId"]
             for runtime in response["agentRuntimes"]
-            if runtime["agentRuntimeName"] == AGENT_NAME
+            if runtime["agentRuntimeName"] == AGENTCORE_RUNTIME_NAME
         ][0]
         response = client.update_agent_runtime(
             agentRuntimeId=runtime_id,
             agentRuntimeArtifact={
-                "containerConfiguration": {"containerUri": CONTAINER_URI}
+                "containerConfiguration": {
+                    "containerUri": AGENTCORE_RUNTIME_CONTAINER_URI
+                }
             },
             networkConfiguration={"networkMode": "PUBLIC"},
-            roleArn=ROLE_ARN,
-            protocolConfiguration={"serverProtocol": SERVER_PROTOCOL},
+            roleArn=AGENTCORE_RUNTIME_ROLE_ARN,
+            protocolConfiguration={"serverProtocol": AGENTCORE_RUNTIME_SERVER_PROTOCOL},
             authorizerConfiguration=authorizer_configuration,
             environmentVariables=environment_variables,
         )

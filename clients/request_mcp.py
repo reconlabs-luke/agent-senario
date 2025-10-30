@@ -1,31 +1,26 @@
 from mcp import ClientSession
 from mcp.client.streamable_http import streamablehttp_client
-from utils import get_token
+from utils import get_token, get_agent_core_runtime_url
 from envs import *
+from stage import Stage
 
 import asyncio
-import sys
 
 
 async def remote_main():
-    bearer_token = get_token(
-        COGNITO_USER_POOL_ID,
-        COGNITO_USERNAME,
-        COGNITO_PASSWORD,
-        COGNITO_CLIENT_ID,
-        AWS_REGION,
-    )
-    print(f"✅ Got Access Token: {bearer_token[:30]}...")
-
-    if not AGENT_NAME or not bearer_token:
-        raise ValueError("Error: AGENT_RUNTIME_NAME or BEARER_TOKEN environment variable is not set")
-
-
-    encoded_arn = AGENT_ARN.replace(":", "%3A").replace("/", "%2F")
-    if AGENT_ARN:
-        mcp_url = f"https://bedrock-agentcore.{AWS_REGION}.amazonaws.com/runtimes/{encoded_arn}/invocations?qualifier=DEFAULT"
+    if STAGE.lower() == Stage.DEV.value.lower():
+        mcp_url = f"http://localhost:{AGENTCORE_RUNTIME_PORT}/mcp"
+        bearer_token = None
     else:
-        mcp_url = MCP_URL
+        bearer_token = get_token(
+            COGNITO_USER_POOL_ID,
+            COGNITO_USERNAME,
+            COGNITO_PASSWORD,
+            COGNITO_CLIENT_ID,
+            AWS_REGION,
+        )
+        print(f"✅ Got Access Token: {bearer_token[:30]}...")
+        mcp_url = get_agent_core_runtime_url(AWS_REGION, AGENTCORE_RUNTIME_ARN)
 
     headers = {"Content-Type": "application/json"}
     if bearer_token:

@@ -31,8 +31,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.a2a
+    image: ${AGENTCORE_RUNTIME_CONTAINER_URI}
     ports:
-      - "8000:8000"
+      - "${AGENTCORE_RUNTIME_PORT:-9000}:${AGENTCORE_RUNTIME_PORT:-9000}"
     environment:
       OPENAI_API_KEY: ${OPENAI_API_KEY}
-    
+      AWS_REGION: ${AWS_REGION}
+      STAGE: ${STAGE:-dev}
+      AGENTCORE_RUNTIME_URL: ${AGENTCORE_RUNTIME_URL}
+      AGENTCORE_RUNTIME_PORT: ${AGENTCORE_RUNTIME_PORT:-9000}

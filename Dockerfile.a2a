@@ -9,6 +9,9 @@ RUN uv sync --frozen --no-cache
 
 COPY agents/langgraph_agent.py ./agents/langgraph_agent.py
 COPY structure_a2a/a2a_server.py ./structure_a2a/a2a_server.py
-EXPOSE 8000
+COPY utils.py ./utils.py
+COPY envs.py ./envs.py
+COPY stage.py ./stage.py
+EXPOSE ${AGENTCORE_RUNTIME_PORT}
 
 CMD ["uv", "run", "structure_a2a/a2a_server.py"]

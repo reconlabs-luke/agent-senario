@@ -49,12 +49,18 @@ def get_token(
     return bearer_token
 
 
-def get_agent_core_runtime_url(agent_arn: str, aws_region: str, qualifier: str="DEFAULT"):
+def get_agent_core_runtime_url(
+    aws_region: str, agent_arn: str, qualifier: str | None = "DEFAULT"
+):
     encoded_arn = agent_arn.replace(":", "%3A").replace("/", "%2F")
-    mcp_url = f"https://bedrock-agentcore.{aws_region}.amazonaws.com/runtimes/{encoded_arn}/invocations?qualifier={qualifier}"
-    print(f"✅ Got MCP URL: {mcp_url}")
+    if qualifier:
+        url = f"https://bedrock-agentcore.{aws_region}.amazonaws.com/runtimes/{encoded_arn}/invocations?qualifier={qualifier}"
+    else:
+        url = f"https://bedrock-agentcore.{aws_region}.amazonaws.com/runtimes/{encoded_arn}/invocations"
 
-    return mcp_url
+    print(f"✅ Got URL: {url}")
+
+    return url
 
 
 if __name__ == "__main__":
