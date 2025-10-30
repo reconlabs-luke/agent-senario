@@ -9,6 +9,8 @@ RUN uv sync --frozen --no-cache
 
 COPY agents/strands_agent.py ./agents/strands_agent.py
 COPY server_strands.py ./server_strands.py
+COPY utils.py ./utils.py
+COPY envs.py ./envs.py
 EXPOSE 8080
 
 CMD ["uv", "run", "server_strands.py"]

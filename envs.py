@@ -22,13 +22,7 @@ COGNITO_PASSWORD = os.getenv("COGNITO_PASSWORD")
 MCP_URL = os.getenv("MCP_URL")
 BEARER_TOKEN = os.getenv("BEARER_TOKEN")
 
-required_envs = [
-    {"AWS_REGION": AWS_REGION},
-    {"AGENT_NAME": AGENT_NAME},
-    {"CONTAINER_URI": CONTAINER_URI},
-    {"ROLE_ARN": ROLE_ARN},
-    {"SERVER_PROTOCOL": SERVER_PROTOCOL},
-]
+required_envs = []
 
 for env in required_envs:
     if None in env.values():

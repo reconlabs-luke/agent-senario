@@ -46,6 +46,9 @@ graph = graph_builder.compile()
 
 if __name__ == "__main__":
     prompt = "Hello, Im Luke. Please get my canvas name."
-    response = graph.stream({"messages": [HumanMessage(content=prompt)]}, stream_mode="values")
-    for chunk in response:
+    response = ""
+    for chunk in graph.stream({"messages": [HumanMessage(content=prompt)]}, stream_mode="values"):
         chunk["messages"][-1].pretty_print()
+        response = chunk["messages"][-1].content
+        
+    print("✅ Got Response: ", response)
