@@ -5,12 +5,32 @@ from mcp.client.streamable_http import streamablehttp_client
 from strands.types.collections import PaginatedList
 from utils import get_token, get_agent_core_runtime_url
 from envs import *
-
+from bedrock_agentcore.memory import MemoryClient
+from bedrock_agentcore.memory.integrations.strands.config import AgentCoreMemoryConfig, RetrievalConfig
+from bedrock_agentcore.memory.integrations.strands.session_manager import AgentCoreMemorySessionManager
 
 model = BedrockModel(
     region_name="ap-northeast-2",
     model_id="apac.anthropic.claude-sonnet-4-20250514-v1:0",
 )
+
+REGION = "us-east-1"
+MEMORY_ID = "strands_langgraph_intergration-VXxO3uCKU1"
+SESSION_ID = "test-session-1"
+ACTOR_ID = "test-actor-1"
+
+memory_client = MemoryClient(region_name=REGION)
+agentcore_memory_config = AgentCoreMemoryConfig(
+    memory_id=MEMORY_ID,
+    session_id=SESSION_ID,
+    actor_id=ACTOR_ID
+)
+
+session_manager = AgentCoreMemorySessionManager(
+    agentcore_memory_config=agentcore_memory_config,
+    region_name="us-east-1"
+)
+
 
 
 @tool
@@ -49,9 +69,13 @@ with mcp_client:
         agent_id="genpresso_agent",
         system_prompt="You're a helpful assistant.",
         tools=tools,
+        session_manager=session_manager,
     )
 
+    # prompt = "Hello, Im Luke. Please get my canvas name. If there are some issues, please show me as log."
+    prompt = "Hello, Who am i ?"
     response = agent(
-        prompt="Hello, Im Luke. Please get my canvas name. If there are some issues, please show me as log."
+        prompt=prompt
     )
+
     print("\nResponse : ", response.message["content"][0]["text"])
