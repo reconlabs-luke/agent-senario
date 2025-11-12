@@ -49,9 +49,7 @@ def get_token(
     return bearer_token
 
 
-def get_agent_core_runtime_url(
-    aws_region: str, agent_arn: str, qualifier: str | None = "DEFAULT"
-):
+def get_agent_core_runtime_url(aws_region: str, agent_arn: str, qualifier: str | None = "DEFAULT"):
     encoded_arn = agent_arn.replace(":", "%3A").replace("/", "%2F")
     if qualifier:
         url = f"https://bedrock-agentcore.{aws_region}.amazonaws.com/runtimes/{encoded_arn}/invocations?qualifier={qualifier}"
@@ -75,3 +73,10 @@ if __name__ == "__main__":
     )
 
     print(f"Token : {token}")
+
+    url = get_agent_core_runtime_url(
+        aws_region=AWS_REGION,
+        agent_arn=AGENTCORE_RUNTIME_ARN,
+    )
+
+    print(f"URL : {url}")

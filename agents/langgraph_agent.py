@@ -2,45 +2,50 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from langchain_core.messages import HumanMessage
+from langchain_core.messages import HumanMessage, AIMessage
 from langgraph.graph import StateGraph, MessagesState, START
-from langgraph.prebuilt import ToolNode, tools_condition
-from langchain.agents import create_agent
+from langgraph.prebuilt import ToolNode, tools_condition, create_react_agent
+
+# from langchain.agents import create_agent
 from langchain.chat_models import init_chat_model
 from langchain_core.tools import tool
 from langgraph_checkpoint_aws import AgentCoreMemorySaver
+
 
 @tool
 def get_canvas_name():
     """Get canvas name tool"""
     return "My Canvas Name is 'Recon Canvas'"
 
+
 tools = []
 tools += [get_canvas_name]
-
 
 
 REGION = "us-east-1"
 MEMORY_ID = "strands_langgraph_intergration-VXxO3uCKU1"
 MODEL_ID = "us.anthropic.claude-3-7-sonnet-20250219-v1:0"
-SESSION_ID = "session-1"
-ACTOR_ID = "react-agent-1"
+SESSION_ID = "session"
+ACTOR_ID = "react-agent"
 
 checkpointer = AgentCoreMemorySaver(memory_id=MEMORY_ID, region_name=REGION)
 
 llm = init_chat_model("openai:gpt-4o-mini")
 llm_with_tools = llm.bind_tools(tools)
 
-def canvas_node(state: MessagesState):
-    agent = create_agent(
-        model=llm_with_tools, 
-        tools = tools, 
-        system_prompt="You're a helpful Canvas assistant.", 
+
+async def canvas_node(state: MessagesState):
+    agent = create_react_agent(
+        model=llm_with_tools,
+        tools=tools,
+        # system_prompt="You're a helpful Canvas assistant.",
+        prompt="You're a helpful Canvas assistant.",
     )
-    response = agent.invoke(state)
+    response = await agent.ainvoke(state)
     message = response["messages"][-1].content
 
-    return {"messages": [message]}
+    return {"messages": [AIMessage(content=message)]}
+
 
 tool_node = ToolNode(tools)
 
@@ -53,11 +58,11 @@ graph_builder.add_node("tool_node", tool_node)
 graph_builder.add_conditional_edges(canvas_node.__name__, canvas_node, tools_condition)
 graph_builder.add_edge("tool_node", canvas_node.__name__)
 
-graph = graph_builder.compile(checkpointer=checkpointer)
+graph = graph_builder.compile()
 
 if __name__ == "__main__":
     print(SESSION_ID, ACTOR_ID)
-    config = {"configurable": {"thread_id": SESSION_ID.strip(), "actor_id": ACTOR_ID.strip()}}
+    config = {"configurable": {"thread_id": SESSION_ID.replace(" ", ""), "actor_id": ACTOR_ID.replace(" ", "")}}
 
     # prompt = "Hello, Im Luke. Please get my canvas name."
     prompt = "Hello, Im Luke."
@@ -68,5 +73,5 @@ if __name__ == "__main__":
 
     for i in graph.get_state_history(config, limit=3):
         print(i)
-        
+
     print("✅ Got Response: ", response)

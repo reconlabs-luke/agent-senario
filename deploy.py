@@ -35,9 +35,7 @@ if STAGE:
 try:
     response = client.create_agent_runtime(
         agentRuntimeName=AGENTCORE_RUNTIME_NAME,
-        agentRuntimeArtifact={
-            "containerConfiguration": {"containerUri": AGENTCORE_RUNTIME_CONTAINER_URI}
-        },
+        agentRuntimeArtifact={"containerConfiguration": {"containerUri": AGENTCORE_RUNTIME_CONTAINER_URI}},
         networkConfiguration={"networkMode": "PUBLIC"},
         roleArn=AGENTCORE_RUNTIME_ROLE_ARN,
         protocolConfiguration={"serverProtocol": AGENTCORE_RUNTIME_SERVER_PROTOCOL},
@@ -56,11 +54,7 @@ except ClientError as e:
         ][0]
         response = client.update_agent_runtime(
             agentRuntimeId=runtime_id,
-            agentRuntimeArtifact={
-                "containerConfiguration": {
-                    "containerUri": AGENTCORE_RUNTIME_CONTAINER_URI
-                }
-            },
+            agentRuntimeArtifact={"containerConfiguration": {"containerUri": AGENTCORE_RUNTIME_CONTAINER_URI}},
             networkConfiguration={"networkMode": "PUBLIC"},
             roleArn=AGENTCORE_RUNTIME_ROLE_ARN,
             protocolConfiguration={"serverProtocol": AGENTCORE_RUNTIME_SERVER_PROTOCOL},

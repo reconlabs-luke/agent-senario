@@ -1,0 +1,7 @@
+POST http://localhost:8080/invocations
+Accept: text/event-stream
+Content-Type: application/json
+
+{
+    "prompt": "Hello, Im Luke. Please let me know very very long story."
+}

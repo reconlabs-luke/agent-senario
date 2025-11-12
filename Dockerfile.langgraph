@@ -1,0 +1,16 @@
+# Use uv's ARM64 Python base image
+FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim
+
+WORKDIR /app
+ENV PYTHONPATH=/app
+
+COPY pyproject.toml uv.lock ./
+RUN uv sync --frozen --no-cache
+
+COPY agents/langgraph_agent.py ./agents/langgraph_agent.py
+COPY server_langgraph.py ./server_langgraph.py
+COPY utils.py ./utils.py
+COPY envs.py ./envs.py
+EXPOSE 8080
+
+CMD ["uv", "run", "server_langgraph.py"]

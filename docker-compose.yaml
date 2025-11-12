@@ -40,3 +40,15 @@ services:
       STAGE: ${STAGE:-dev}
       AGENTCORE_RUNTIME_URL: ${AGENTCORE_RUNTIME_URL}
       AGENTCORE_RUNTIME_PORT: ${AGENTCORE_RUNTIME_PORT:-9000}
+
+  langgraph_agent:
+    build:
+      context: .
+      dockerfile: Dockerfile.langgraph
+    image: ${AGENTCORE_RUNTIME_CONTAINER_URI}
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      AGENTCORE_RUNTIME_PORT: ${AGENTCORE_RUNTIME_PORT:-8080}
+    ports:
+      - "${AGENTCORE_RUNTIME_PORT:-8080}:${AGENTCORE_RUNTIME_PORT:-8080}"
+
